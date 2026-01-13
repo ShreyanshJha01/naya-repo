@@ -22,8 +22,8 @@ pipeline {
     }
     post{
         success{
-                       mail bcc: 'srinathpandey72@gmail.com', 
-                       body: """The Jenkins build has complete successfully.
+            mail bcc: 'srinathpandey72@gmail.com', 
+            body: """The Jenkins build has complete successfully.
             Job name: ${env.JOB_NAME}
             Build Number: ${env.BUILD_NUMBER}
             Build URL: ${env.BUILD_URL}""", cc: 'prateeksingh.ps345@gmail.com', from: '', replyTo: '', subject: 'done', to: '22051778@kiit.ac.in'
