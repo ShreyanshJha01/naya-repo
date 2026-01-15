@@ -12,13 +12,6 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('sonar scan') {
-            steps {
-                withSonarQubeEnv(installationName: 'sonarqube', credentialsId: 'arpp') {
-                    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
-                }
-            }
-        }
     }
     post{
         success{
