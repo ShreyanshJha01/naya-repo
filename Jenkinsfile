@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('git checkout') {
             steps {
-                git branch: 'main', credentialsId: 'arp', url: 'https://github.com/ShreyanshJha01/pipeline.git'
+                git branch: 'main', credentialsId: 'arp', url: 'https://github.com/ShreyanshJha01/naya-repo.git'
             }
         }
         stage('test') {
