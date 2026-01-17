@@ -2,27 +2,28 @@ pipeline {
     agent any
 
     stages {
-        stage('git checkout') {
+
+        stage('Checkout') {
             steps {
-                git branch: 'main', credentialsId: 'arpf', url: 'https://github.com/ShreyanshJha01/pipeline.git'
+                checkout scm
             }
         }
-        stage('test') {
+
+        stage('Build') {
             steps {
-                sh 'mvn test'
+                sh 'mvn clean compile'
             }
         }
-    }
-    post{
-        success{
-            mail bcc: 'srinathpandey72@gmail.com', 
-            body: """The Jenkins build has complete successfully.
-            Job name: ${env.JOB_NAME}
-            Build Number: ${env.BUILD_NUMBER}
-            Build URL: ${env.BUILD_URL}""", cc: 'prateeksingh.ps345@gmail.com', from: '', replyTo: '', subject: 'done', to: '22051778@kiit.ac.in'
-                    }
-        failure{
-            mail bcc: 'prateeksingh.ps345@gmail.com', body: 'this is done', cc: 'srinathpandey72@gmail.com', from: '', replyTo: '', subject: 'done', to: '22051778@kiit.ac.in'
+
+        stage('scanning') {
+            steps {
+                withSonarQubeEnv(
+                    installationName: 'sonar_banaye_chinar',
+                    credentialsId: 'sonar_banaega_chinar'
+                ) {
+                    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                }
+            }
         }
     }
 }
