@@ -1,27 +1,43 @@
 pipeline {
-    agent any
+    agent {
+        label 'dev'
+    }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Pipeline Repo') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Clone Project Repo') {
             steps {
-                sh 'mvn clean compile'
+                git branch: 'main',
+                    credentialsId: 'github-creds',
+                    url: 'https://github.com/ShreyanshJha01/pipeline.git'
             }
         }
 
-        stage('scanning') {
+        stage('Build Project') {
             steps {
-                withSonarQubeEnv(
-                    installationName: 'sonar_banaye_chinar',
-                    credentialsId: 'sonar_banaega_chinar'
-                ) {
-                    sh 'mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar'
+                dir('pipeline') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+        stage('SonarQube Scan') {
+            steps {
+                dir('pipeline') {
+                    withSonarQubeEnv('sonar_banaye_chinar') {
+                        sh '''
+                        mvn clean verify \
+                        org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                        -Dsonar.projectKey=pipeline-project \
+                        -Dsonar.projectName=pipeline-project
+                        '''
+                    }
                 }
             }
         }
