@@ -1,37 +1,37 @@
 pipeline {
-    agent {
-        label 'dev'
-    }
+    agent { label 'dev' }
 
     stages {
 
-        stage('Checkout Pipeline Repo') {
+        stage('Checkout Jenkinsfile Repo') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Clone Project Repo') {
+        stage('Checkout Project Repo') {
             steps {
-                git branch: 'main',
-                    credentialsId: 'github-creds',
-                    url: 'https://github.com/ShreyanshJha01/pipeline.git'
+                dir('project') {
+                    git branch: 'main',
+                        credentialsId: 'github-creds',
+                        url: 'https://github.com/ShreyanshJha01/pipeline.git'
+                }
             }
         }
 
         stage('Build Project') {
             steps {
-                dir('pipeline') {
+                dir('project') {
+                    sh 'ls -la'
                     sh 'chmod +x mvnw'
                     sh './mvnw clean compile'
                 }
             }
         }
 
-
         stage('SonarQube Scan') {
             steps {
-                dir('pipeline') {
+                dir('project') {
                     withSonarQubeEnv('sonar-cred-s') {
                         sh './mvnw sonar:sonar'
                     }
